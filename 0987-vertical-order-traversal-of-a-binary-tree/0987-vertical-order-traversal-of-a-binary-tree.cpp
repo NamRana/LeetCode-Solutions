@@ -1,26 +1,38 @@
 class Solution {
-    map<int, map<int, multiset<int>>> mp;
-    vector< vector<int> > result;
 public:
-    void vot(TreeNode* root, int row, int col) {
-        if(root == NULL)
-            return;
-        mp[col][row].insert(root->val);
-        vot(root->left, row + 1, col - 1);
-        vot(root->right, row + 1, col + 1);
-    }
-    vector<vector<int>> verticalTraversal(TreeNode* root) {
-
-        vot(root, 0, 0);
+ 
+    void traverse(TreeNode *root, int vertical, int level, map<int, map<int, multiset<int>>> &mp)
+    {
+        if(root == NULL) return;
         
-        for(auto &i : mp) {
-            vector<int> temp;
-            for(auto &j: i.second) {
-                temp.insert(temp.end(), j.second.begin(), j.second.end() );
+        mp[vertical][level].insert(root->val);
+        traverse(root->left, vertical-1, level+1, mp);
+        traverse(root->right, vertical+1, level+1, mp);
+        return;
+        
+    }
+    
+    vector<vector<int>> verticalTraversal(TreeNode* root) {
+        
+        vector<vector<int>> ans;
+        map<int, map<int, multiset<int>>> mp; 
+        
+        traverse(root, 0, 0, mp); // left coordingate/left child, right coordinate/right child
+        
+        for(auto i: mp)
+        {
+            vector<int> currOrder;
+            
+            for(auto j: i.second)
+            {
+                for(auto num: j.second)
+                    currOrder.push_back(num);
             }
-            result.emplace_back(temp);
+            
+            ans.push_back(currOrder);
         }
-
-        return result;
+        
+        return ans;
+        
     }
 };
